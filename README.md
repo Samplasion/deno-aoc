@@ -1,11 +1,14 @@
 # deno-aoc
 
+> Note: This tool is still in development. It is not guaranteed to work, at
+> least until beta.
+
 An Advent of Code runner for Deno. Inspired by, and partially compatible with,
 [aocrunner by caderek](https://github.com/caderek/aocrunner).
 
 ## Installation
 
-    $ deno install --allow-run --allow-net --allow-env --allow-read --allow-write -n aoc <todo add link>
+    $ deno install --allow-run --allow-net --allow-env --allow-read --allow-write -n aoc https://deno.land/x/aoc/cli.ts
 
 ### Permissions explanation
 
@@ -24,7 +27,7 @@ An Advent of Code runner for Deno. Inspired by, and partially compatible with,
     $ cd aoc2021
     $ aoc init
 
-Specify the year and day of the challenge.
+Specify the year of the challenge:
 
     $ aoc init -y 2021
     $ aoc init --year 2021
@@ -56,4 +59,6 @@ You can use `all` to run all the solutions in succession.
 
 This tool caches the input file and only downloads it once. To forcefully
 re-download the input file, you must delete it. Furthermore, this tool caches
-wrong solutions, so that you can't send them more than once.
+wrong solutions, so that you can't send them more than once. I've made my best
+efforts to prevent abuse. If there's a way to circumvent this, it's most likely
+a bug, and I'd love to hear about it.

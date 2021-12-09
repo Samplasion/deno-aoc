@@ -1,4 +1,4 @@
-import run from "./__template"; // TODO: set the actual URL
+import run from "https://deno.land/x/aoc/mod.ts"; // TODO: set the actual URL
 
 const parseInput = (rawInput: string) => {
   return rawInput;
