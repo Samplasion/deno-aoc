@@ -51,3 +51,9 @@ Run the solutions
     $ aoc run all
 
 You can use `all` to run all the solutions in succession.
+
+## Abuse concerns
+
+This tool caches the input file and only downloads it once. To forcefully
+re-download the input file, you must delete it. Furthermore, this tool caches
+wrong solutions, so that you can't send them more than once.
