@@ -5,6 +5,57 @@ import { msFixed } from "../_utils.ts";
 
 type Awaited<T> = T extends Promise<infer U> ? U : T;
 
+/**
+ * Runs the current solution, benchmarks it, tests it agains a set of
+ * tests, and logs the results.
+ * 
+ * In your solution files, this is your main entrypoint. You can
+ * add your own tests by adding them to the `tests` array in each part.
+ * It is recommended to add the examples in the challenge description.
+ * 
+ * You can use [options.onlyTests] to only run the tests, which is useful
+ * when your algorithm is resource intensive and is still being developed.
+ * Remember to disable it once you're done to send the solution!
+ * 
+ * @example
+ * ```ts
+ * import { run } from "./mod.ts";
+ * 
+ * const part1 = (input: string) => {
+ *    // Your solution code goes here
+ * };
+ * 
+ * const part2 = (input: string) => {
+ *   // Your solution code goes here
+ * };
+ * 
+ * run({
+ *   part1: {
+ *     tests: [
+ *       {
+ *         input: `1234`,
+ *         expected: "4321",
+ *       },
+ *     ],
+ *     solution: part1,
+ *   },
+ *   part2: {
+ *     tests: [
+ *       {
+ *         input: `1234`,
+ *         expected: "4321",
+ *       },
+ *     ],
+ *     solution: part2,
+ *   },
+ *   onlyTests: false, // Enable this to only run tests
+ * });
+ * ```
+ * 
+ * @param options The options for the challenge (tests and solution function)
+ * @param inputFile An alternative path for the input file, if applicable
+ * @returns Nothing.
+ */
 export async function run(options: ModuleRunOptions, inputFile?: string) {
     const perm = await Deno.permissions.query({ name: "hrtime" });
     if (perm.state != "granted") {
