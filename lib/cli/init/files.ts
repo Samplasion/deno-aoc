@@ -32,13 +32,13 @@ function getReadme(config: Config, existingReadme?: string) {
     const solutions = usefulTags.stripAllIndents`
     <!--SOLUTIONS-->
     ${config.days.map((day, i) => {
-        const pad = (n: number) => n < 10 ? " " + n : "";
+        const pad = (n: number) => n.toString().padStart(2, "0");
         if (day.part2.solved) {
-            return badge(`Day ${i + 1}`, Stars.TWO, "brightgreen", `/src/day${pad(i + 1)}`);
+            return badge(`Day ${pad(i + 1)}`, Stars.TWO, "brightgreen", `/src/day${pad(i + 1)}`);
         } else if (day.part1.solved) {
-            return badge(`Day ${i + 1}`, Stars.ONE, "yellow", `/src/day${pad(i + 1)}`);
+            return badge(`Day ${pad(i + 1)}`, Stars.ONE, "yellow", `/src/day${pad(i + 1)}`);
         } else {
-            return badge(`Day ${i + 1}`, Stars.ZERO, "lightgrey");
+            return badge(`Day ${pad(i + 1)}`, Stars.ZERO, "lightgrey");
         }
     }).join("\n")}
     <!--/SOLUTIONS-->`;
@@ -86,9 +86,7 @@ function getReadme(config: Config, existingReadme?: string) {
 
         ## Installation
 
-        \`\`\`
-        # TODO: add installation instructions
-        \`\`\`
+        [Detailed and up-to-date installation instructions](https://deno.land/x/aoc)
 
         ## Running in dev mode
 
