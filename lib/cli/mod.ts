@@ -3,10 +3,11 @@ import run from "./run.ts";
 import "https://deno.land/x/dotenv@v3.1.0/load.ts";
 import init from "./init.ts";
 import { VERSION } from "../../version.ts";
+import download from "./download.ts";
 
 const program = new Denomander(
     {
-        app_name: "Advent of Code CLI",
+        app_name: "aoc",
         app_description: "A CLI for Advent of Code",
         app_version: VERSION,
     }
@@ -28,6 +29,19 @@ export default function main() {
         .option("-y --year", "The year to initialize. Only valid when not specifying a day.")
         .argDescription("day", "The day to initialize. If not specified, a basic file structure will be initialized.")
         .action(init.bind(null, program));
+
+    program
+        .command("download [day]")
+        .alias("dl")
+        .description("Downloads the day's input")
+        .argDescription("day", "The day to download.")
+        .action(download.bind(null, program));
+
+    program.setVersion({
+        version: VERSION,
+        flags: "-v --version",
+        description: "Displays the version of the app and exits"
+    });
 
     program.parse(Deno.args);
 }

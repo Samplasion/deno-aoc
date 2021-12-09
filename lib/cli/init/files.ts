@@ -1,4 +1,5 @@
 import { path, usefulTags } from "../../deps.ts";
+import { REPO } from "../../_utils.ts";
 import { Config } from "../config.ts";
 
 export default function getFiles(config: Config) {
@@ -86,7 +87,7 @@ function getReadme(config: Config, existingReadme?: string) {
 
         ## Installation
 
-        [Detailed and up-to-date installation instructions](https://deno.land/x/aoc)
+        [Detailed and up-to-date installation instructions](${REPO})
 
         ## Running in dev mode
 

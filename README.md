@@ -48,7 +48,9 @@ For example:
 
     $ aoc download 1
 
-Run the solutions
+[Abuse concerns](#abuse-concerns)
+
+### Run the solutions
 
     $ aoc run <day>
     $ aoc run all

@@ -1,5 +1,6 @@
 import { colors, Denomander, Logger, path, usefulTags } from "../deps.ts";
 import { downloadInput, Status } from "../module/api.ts";
+import { malformedDirectoryError, noConfigurationError, noSessionKeyError } from "../_utils.ts";
 import { getConfig, defaultConfig } from "./config.ts";
 import filesToCreate from "./init/files.ts";
 
@@ -43,9 +44,7 @@ async function initDay(_program: Denomander, day: number) {
     const config = getConfig();
 
     if (!config) {
-        Logger.error(`No configuration found.`);
-        Logger.info(`Please make sure to be in the right directory (the one with a ${colors.bold(colors.yellow(".aoc.json"))} file). Alternatively, delete or move everything and use the "init" command without arguments to create a new structure.`);
-        Deno.exit(1);
+        noConfigurationError();
     }
 
     const pad = (n: number) => n.toString().padStart(2, "0");
@@ -55,10 +54,7 @@ async function initDay(_program: Denomander, day: number) {
     const templateFile = path.join(srcDir, "template", `index.ts`);
 
     if (!Deno.lstatSync(srcDir).isDirectory) {
-        Logger.error(`The current directory is not an AoC repository.`);
-        Logger.warn(`The current directory is malformed. Missing: ${colors.bold(colors.yellow("src/"))} directory.`);
-        Logger.info(`Please make sure to be in the right directory (the one with a ${colors.bold(colors.yellow(".aoc.json"))} file). Alternatively, delete or move everything and use the "init" command without arguments to create a new structure.`);
-        Deno.exit(1);
+        malformedDirectoryError();
     }
 
     let dayDirExists = false;
@@ -93,7 +89,7 @@ async function initDay(_program: Denomander, day: number) {
     if (input.status == Status.OK) {
         Deno.writeTextFileSync(path.resolve(dayDir, "input.txt"), input.data!);
     } else {
-        Logger.error(`Session key not found or invalid.\nPlease set the environment variable ${colors.bold(colors.yellow("AOC_SESSION_KEY"))} to your .env file, or download your input manually.`);
+        noSessionKeyError();
     }
 }
 
