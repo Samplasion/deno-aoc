@@ -1,7 +1,16 @@
 import { Logger, fs, sleep, colors, path } from "../deps.ts";
 import { CLIRunOptions } from "../types.ts";
+import { noConfigurationError } from "../_utils.ts";
+import { getConfig, saveConfig } from "./config.ts";
+import { getReadme } from "./init/files.ts";
 
 export default async function run(args: CLIRunOptions) {
+    const config = getConfig();
+
+    if (!config) {
+        noConfigurationError();
+    }
+
     let { day, timeout } = args;
     day = day.toString().replaceAll("..", "").replaceAll(".", "") as CLIRunOptions["day"];
     const dayNumber = parseInt(day);
@@ -14,16 +23,17 @@ export default async function run(args: CLIRunOptions) {
         Deno.exit(1);
     }
     const pad = (num: number) => num < 10 ? `0${num}` : num;
+    // deno-lint-ignore require-await
     const run = async (day: string, logFailure = false) => {
         const cwd = Deno.cwd();
         if (fs.existsSync(path.resolve(cwd, "src", `day${day}`))) {
-            // await import(`./src/day${day}/index.ts`);
             const proc = Deno.run({
                 cwd: path.resolve(cwd, "src", `day${day}`),
                 cmd: [
                     Deno.execPath(),
                     "run",
                     "--allow-read",
+                    "--allow-write",
                     "--allow-env",
                     "--allow-hrtime",
                     path.resolve(cwd, "src", `day${day}`, "index.ts"),
@@ -56,5 +66,20 @@ export default async function run(args: CLIRunOptions) {
         }
     } else {
         await run(pad(dayNumber).toString(), true);
+    }
+
+    updateReadme();
+}
+
+function updateReadme() {
+    const config = getConfig()!;
+
+    try {
+        const filePath = path.resolve(Deno.cwd(), "README.md");
+        const readme = Deno.readTextFileSync(filePath).toString();
+        Deno.writeTextFileSync(filePath, getReadme(config, readme));
+    } catch {
+        Logger.error(`Failed to update ${colors.bold(colors.yellow("README.md"))}. Please ensure the file exists and is writable.`);
+        Deno.exit(1);
     }
 }

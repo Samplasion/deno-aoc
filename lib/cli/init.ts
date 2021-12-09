@@ -4,8 +4,26 @@ import { malformedDirectoryError, noConfigurationError, noSessionKeyError } from
 import { getConfig, defaultConfig } from "./config.ts";
 import filesToCreate from "./init/files.ts";
 
-export default function init(program: Denomander, args: { day?: number }) {
+export default function init(program: Denomander, args: { day?: string | number }) {
     if (args.day) {
+        if (typeof args.day === "string") {
+            if (args.day.toLowerCase() == "all") {
+                Logger.error("Cannot download all days at once");
+                Logger.info("To avoid excessive burden on the Advent of Code servers, please download one day at a time");
+            } else {
+                Logger.error("Invalid day");
+                Logger.info("Please specify a valid numeric day");
+            }
+    
+            Deno.exit(1);
+        } else if (args.day < 1 || args.day > 25) {
+            Logger.error("Invalid day");
+            Logger.info("Please specify a valid numeric day in the range 1-25");
+    
+            Deno.exit(1);
+        }
+        args.day = ~~args.day;
+
         initDay(program, args.day);
     } else {
         initDirectory(program);
@@ -22,7 +40,7 @@ async function initDirectory(program: Denomander) {
     }
 
     // Check if the directory is empty
-    if ([...Deno.readDirSync(dir)].length > 0) {
+    if ([...Deno.readDirSync(dir)].filter(file => file.name != ".env").length > 0) {
         Logger.error(`The current directory is not empty.`);
         Logger.warn(`Please use the "init" command in an empty directory.`);
         Logger.info(`Are you trying to use the "init" command inside an init repository?`);

@@ -1,7 +1,8 @@
-// import getCallerFile from "../../getCallerFile.ts";
+import getCallerFile from "../getCallerFile.ts";
 import { path, Logger, colors } from "../deps.ts";
 import { ModuleRunOptions, Solution, Test } from "../types.ts";
 import { msFixed } from "../_utils.ts";
+import { getConfig, saveConfig } from "../cli/config.ts";
 
 type Awaited<T> = T extends Promise<infer U> ? U : T;
 
@@ -57,17 +58,21 @@ type Awaited<T> = T extends Promise<infer U> ? U : T;
  * @returns Nothing.
  */
 export async function run(options: ModuleRunOptions, inputFile?: string) {
+    const cwd = Deno.cwd();
+
+    Deno.chdir(cwd.split(path.SEP).slice(0, -2).join(path.SEP));
+    const config = getConfig();
+    Deno.chdir(cwd);
+
     const perm = await Deno.permissions.query({ name: "hrtime" });
     if (perm.state != "granted") {
         Logger.warn(`Please provide the ${colors.red("--allow-hrtime")} permission to enable high resolution timers.`);
         Logger.warn(`If you don't provide it, the benchmarking results will be inaccurate.`);
+        console.log();
     }
 
     if (!inputFile) {
-        // const dir = path.parse(getCallerFile()).dir;
-        // console.log(getCallerFile());
-        const dir = Deno.cwd();
-        inputFile = path.join(dir, "input.txt");
+        inputFile = path.join(cwd, "input.txt");
     }
 
     if ("trimTestInputs" in options) {
@@ -76,6 +81,9 @@ export async function run(options: ModuleRunOptions, inputFile?: string) {
         Logger.warn(`Please use the ${colors.red("usefultags")} module instead.`);
         console.log();
     }
+
+    const dirname = path.basename(cwd);
+    const day = Number(dirname.slice(dirname.length-2, dirname.length));
 
     if (options.part1.tests) {
         await runTests({
@@ -105,7 +113,7 @@ The input file hasn't been found at the default position, \`${colors.bold(colors
 Please either provide the path to the input file as the second argument,
 or add an input file to the current directory.
 (Checking: \`${colors.bold(colors.yellow(inputFile))}\`)
-        `);
+        `.trim());
         return;
     }
 
@@ -116,13 +124,23 @@ or add an input file to the current directory.
     if (options.part1.solution) {
         out1 = await runSolution(options.part1.solution, input, 1);
         totalTime += out1[1];
+
+        config.days[day - 1].part1.result = out1[0]!;
+        config.days[day - 1].part1.time = out1[1];
     }
     if (options.part2.solution) {
         out2 = await runSolution(options.part2.solution, input, 2);
         totalTime += out2[1];
+
+        config.days[day - 1].part2.result = out2[0]!;
+        config.days[day - 1].part2.time = out2[1];
     }
 
     Logger.info(`Total time: ${colors.bold(colors.yellow(msFixed(totalTime)))}`);
+
+    Deno.chdir(cwd.split(path.SEP).slice(0, -2).join(path.SEP));
+    saveConfig(config);
+    Deno.chdir(cwd);
 }
 
 async function runTests(options: {
@@ -135,7 +153,6 @@ async function runTests(options: {
         const { input, expected } = tests[i];
         const actual = await solution(input);
         if (actual !== expected) {
-            console.log();
             Logger.error(`Part ${part} test ${i + 1} failed`);
             console.log();
             Logger.info(`Expected: `);

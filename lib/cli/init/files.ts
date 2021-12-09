@@ -15,11 +15,15 @@ export default function getFiles(config: Config) {
         {
             name: "src/template/index.ts",
             content: getTemplate(),
+        },
+        {
+            name: ".env",
+            content: "AOC_SESSION_KEY=",
         }
     ];
 }
 
-function getReadme(config: Config, existingReadme?: string) {
+export function getReadme(config: Config, existingReadme?: string) {
     const Stars = {
         ZERO: "☆☆",
         ONE: "★☆",

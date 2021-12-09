@@ -36,8 +36,6 @@ export interface APIResponse<T> {
 export async function downloadInput(year: number, day: number): Promise<APIResponse<string>> {
     const KEY = Deno.env.get("AOC_SESSION_KEY") ?? "";
 
-    console.log(KEY);
-
     if (!KEY || KEY.length < 96) {
         // Logger.error(`Session key not found or invalid. Please set the environment variable ${colors.bold(colors.yellow("AOC_SESSION_KEY"))} to your session key.`);
         // Deno.exit(1);
