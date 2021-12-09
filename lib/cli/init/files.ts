@@ -115,6 +115,6 @@ function getReadme(config: Config, existingReadme?: string) {
 }
 
 function getTemplate() {
-    const cur = path.dirname(path.fromFileUrl(import.meta.url));
-    return Deno.readTextFileSync(path.resolve(cur, "template.ts.template"));
+    const cur = path.dirname(import.meta.url.replace(/files.ts$/, "template.ts.template"));
+    return Deno.readTextFileSync(cur);
 }
