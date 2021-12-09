@@ -8,7 +8,7 @@ An Advent of Code runner for Deno. Inspired by, and partially compatible with,
 
 ## Installation
 
-    $ deno install --allow-run --allow-net --allow-env --allow-read --allow-write -n aoc https://deno.land/x/aoc/cli.ts
+    $ deno install --allow-run --allow-net --allow-env --allow-read --allow-write -f -n aoc https://deno.land/x/aoc/cli.ts
 
 ### Permissions explanation
 
