@@ -1,5 +1,5 @@
-import { Logger, fs, sleep, colors, path } from "../../deps.ts";
-import { CLIRunOptions } from "../../types.ts";
+import { Logger, fs, sleep, colors, path } from "../deps.ts";
+import { CLIRunOptions } from "../types.ts";
 
 export default async function run(args: CLIRunOptions) {
     let { day, timeout } = args;

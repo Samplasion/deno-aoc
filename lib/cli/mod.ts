@@ -1,13 +1,14 @@
-import { Denomander } from "../../deps.ts";
+import { Denomander } from "../deps.ts";
 import run from "./run.ts";
 import "https://deno.land/x/dotenv@v3.1.0/load.ts";
 import init from "./init.ts";
+import { VERSION } from "../../version.ts";
 
 const program = new Denomander(
     {
         app_name: "Advent of Code CLI",
         app_description: "A CLI for Advent of Code",
-        app_version: "0.0.1"
+        app_version: VERSION,
     }
 );
 

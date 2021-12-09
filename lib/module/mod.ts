@@ -1,7 +1,7 @@
 // import getCallerFile from "../../getCallerFile.ts";
-import { path, Logger, colors } from "../../deps.ts";
-import { ModuleRunOptions, Solution, Test } from "../../types.ts";
-import { msFixed } from "./../_utils.ts";
+import { path, Logger, colors } from "../deps.ts";
+import { ModuleRunOptions, Solution, Test } from "../types.ts";
+import { msFixed } from "../_utils.ts";
 
 type Awaited<T> = T extends Promise<infer U> ? U : T;
 

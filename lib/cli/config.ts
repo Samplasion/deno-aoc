@@ -1,4 +1,4 @@
-import { SolutionType } from "../../types.ts";
+import { SolutionType } from "../types.ts";
 
 export interface Config {
     year: number;

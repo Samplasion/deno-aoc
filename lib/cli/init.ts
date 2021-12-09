@@ -1,4 +1,4 @@
-import { colors, Denomander, Logger, path, usefulTags } from "../../deps.ts";
+import { colors, Denomander, Logger, path, usefulTags } from "../deps.ts";
 import { downloadInput, Status } from "../module/api.ts";
 import { getConfig, defaultConfig } from "./config.ts";
 import filesToCreate from "./init/files.ts";

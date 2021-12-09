@@ -1,4 +1,4 @@
-import { path, usefulTags } from "../../../deps.ts";
+import { path, usefulTags } from "../../deps.ts";
 import { Config } from "../config.ts";
 
 export default function getFiles(config: Config) {

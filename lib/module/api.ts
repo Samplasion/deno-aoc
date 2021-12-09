@@ -1,4 +1,4 @@
-import { colors, Logger } from "../../deps.ts";
+import { colors, Logger } from "../deps.ts";
 
 interface APIOptions {
     method: "GET" | "POST";
