@@ -1,8 +1,9 @@
-import { colors, Denomander, Logger, path, usefulTags } from "../deps.ts";
+import { colors, Denomander, Logger, path, usefulTags } from "../../deps.ts";
 import { downloadInput, Status } from "../module/api.ts";
 import { malformedDirectoryError, noConfigurationError, noSessionKeyError } from "../_utils.ts";
 import { getConfig, defaultConfig } from "./config.ts";
 import filesToCreate from "./init/files.ts";
+import { VERSION } from "../../version.ts";
 
 export default function init(program: Denomander, args: { day?: string | number }) {
     if (args.day) {
@@ -101,7 +102,7 @@ async function initDay(_program: Denomander, day: number) {
         Logger.warn(`No template file has been found.\nPlease create a template file at ${colors.bold(colors.yellow(`${templateFile}`))}.`);
     }
 
-    Deno.writeTextFileSync(path.resolve(dayDir, "index.ts"), content);
+    Deno.writeTextFileSync(path.resolve(dayDir, "index.ts"), content.replaceAll("{{VERSION}}", VERSION));
     Deno.writeTextFileSync(path.resolve(dayDir, "README.md"), _getDayReadme(config.year, day));
     const input = await downloadInput(config.year, day);
     if (input.status == Status.OK) {

@@ -1,4 +1,4 @@
-import { colors, Logger } from "../deps.ts";
+import { cheerio, colors, Logger, parseDuration } from "../../deps.ts";
 
 interface APIOptions {
     method: "GET" | "POST";
@@ -26,6 +26,8 @@ export enum Status {
     NO_KEY,
     PART_SOLVED,
     PART_WRONG,
+    TOO_SOON,
+    LOCKED,
 }
 
 export interface APIResponse<T> {
@@ -56,21 +58,107 @@ export async function downloadInput(year: number, day: number): Promise<APIRespo
     })).catch(e => handleError<string>(e));
 }
 
+export async function submitResult(day: number, year: number, part: number, result: string): Promise<APIResponse<string | number>> {
+    const KEY = Deno.env.get("AOC_SESSION_KEY") ?? "";
+
+    if (!KEY || KEY.length < 96) {
+        return Promise.resolve({
+            data: null,
+            status: Status.NO_KEY,
+        });
+    }
+
+    try {
+        const res = await api(`/${year}/day/${day}/answer`, {
+            method: "POST",
+            body: `level=${part}&answer=${result}`,
+            apiKey: KEY,
+            contentType: "application/x-www-form-urlencoded",
+        });
+        const input = await res.text();
+
+        if (input.includes("don't repeatedly request this endpoint")) {
+            return {
+                data: null,
+                status: Status.TOO_SOON,
+            };
+        }
+
+        const main = cheerio.load(input)("main");
+        const info = main?.text().replace(/\[.*\]/, "").trim();
+
+        if (!info) {
+            return {
+                data: main.text(),
+                status: Status.ERROR,
+            };
+        }
+
+        if (main.text().includes("That's the right answer")) {
+            return {
+                data: info,
+                status: Status.PART_SOLVED,
+            };
+        } else {
+            let status = Status.ERROR;
+
+            if (info.includes("That's not the right answer")) {
+                status = Status.PART_WRONG;
+            } else if (info.includes("You gave an answer too recently")) {
+                status = Status.TOO_SOON;
+            } else if (info.includes("You don't seem to be solving the right level")) {
+                status = Status.LOCKED;
+            }
+
+            const textNumbers = {
+                "one": 1,
+                "two": 2,
+                "three": 3,
+                "four": 4,
+                "five": 5,
+                "six": 6,
+                "seven": 7,
+                "eight": 8,
+                "nine": 9,
+                "ten": 10,
+            };
+            const regex = new RegExp(`${Object.keys(textNumbers).join("|")} (second|minute|hour|day)`);
+            if (regex.test(info))
+                timing: {
+                    const [, number, unit] = info.match(regex) ?? [null, null, null];
+                    if (!number || !unit) {
+                        break timing;
+                    }
+                    const dur = parseDuration(`${textNumbers[number as keyof typeof textNumbers]} ${unit}`);
+                    return {
+                        data: dur,
+                        status,
+                    };
+                }
+
+            return {
+                data: info,
+                status,
+            };
+        }
+    } catch (e) {
+        return handleError<string>(e);
+    }
+}
+
 function handleError<T>(err: Error): APIResponse<T> {
     if (err.message === "400" || err.message === "500") {
-        console.log(
-            colors.red("INVALID SESSION KEY\n\n") +
-            "Please make sure that the session key in the .env file is correct.\n" +
-            "You can find your session key in the 'session' cookie at:\n" +
-            "https://adventofcode.com\n\n" +
-            colors.bold("Restart the script after changing the .env file.\n"),
-        )
+        Logger.error(
+            colors.red("INVALID SESSION KEY") + "\n\n" +
+            `Session key not found or invalid. Please set the environment variable ${colors.bold(colors.yellow("AOC_SESSION_KEY"))} to your session key.` +
+            `To get your cookie, visit ${colors.bold(colors.yellow("https://adventofcode.com/"))}, log in and copy the value of the cookie named session.\n\n`);
     } else if (err.message.startsWith("5")) {
-        console.log(colors.red("SERVER ERROR"))
+        Logger.error(colors.red("Server error. Please try again later."))
     } else if (err.message === "404") {
-        console.log(colors.yellow("CHALLENGE NOT YET AVAILABLE"))
+        Logger.error(colors.yellow("This challenge hasn't been unlocked yet."))
     } else {
-        Logger.error("UNEXPECTED ERROR\nPlease check your internet connection.\n\nIf you think it's a bug, create an issue on github.\nHere are some details to include:\n");
+        Logger.error(colors.bold(colors.red("Unexpected error")));
+        Logger.error(colors.yellow("Please report the following error to the developer."));
         console.log(err)
     }
 

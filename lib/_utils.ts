@@ -1,4 +1,4 @@
-import { Logger, colors } from "./deps.ts";
+import { Logger, colors } from "./../deps.ts";
 
 export function msFixed(ms: number): string {
     if (ms > 1000) {

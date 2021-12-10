@@ -1,8 +1,9 @@
 import getCallerFile from "../getCallerFile.ts";
-import { path, Logger, colors } from "../deps.ts";
+import { path, Logger, colors } from "../../deps.ts";
 import { ModuleRunOptions, Solution, Test } from "../types.ts";
 import { msFixed } from "../_utils.ts";
 import { getConfig, saveConfig } from "../cli/config.ts";
+import { updateReadme } from "../cli/init/files.ts";
 
 type Awaited<T> = T extends Promise<infer U> ? U : T;
 
@@ -59,8 +60,9 @@ type Awaited<T> = T extends Promise<infer U> ? U : T;
  */
 export async function run(options: ModuleRunOptions, inputFile?: string) {
     const cwd = Deno.cwd();
+    const root = cwd.split(path.SEP).slice(0, -2).join(path.SEP);
 
-    Deno.chdir(cwd.split(path.SEP).slice(0, -2).join(path.SEP));
+    Deno.chdir(root);
     const config = getConfig();
     Deno.chdir(cwd);
 
@@ -138,8 +140,9 @@ or add an input file to the current directory.
 
     Logger.info(`Total time: ${colors.bold(colors.yellow(msFixed(totalTime)))}`);
 
-    Deno.chdir(cwd.split(path.SEP).slice(0, -2).join(path.SEP));
+    Deno.chdir(root);
     saveConfig(config);
+    updateReadme(config);
     Deno.chdir(cwd);
 }
 

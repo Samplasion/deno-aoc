@@ -1,4 +1,4 @@
-import { colors, Denomander, Logger, path } from "../deps.ts";
+import { colors, Denomander, Logger, path } from "../../deps.ts";
 import { downloadInput, Status } from "../module/api.ts";
 import { malformedDirectoryError, noConfigurationError, noSessionKeyError, REPO } from "../_utils.ts";
 import { getConfig } from "./config.ts";

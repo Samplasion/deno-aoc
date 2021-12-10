@@ -17,6 +17,17 @@ import * as _usefulTags from "https://deno.land/x/usefultags@1.2.0/usefulTags.d.
 const ut = { ...usefulTags };
 export { ut as usefulTags };
 
+// @standards/duration
+import parseDurationFn from "https://cdn.skypack.dev/@standards/duration";
+type ParseDurationFunction1Args = (duration: string) => number;
+type ParseDurationFunction2Args = (duration: string, options?: Record<string, unknown>) => number;
+type ParseDurationFunction3Args = (duration: string, defaultValue?: number, options?: Record<string, unknown>) => number;
+const parseDuration = parseDurationFn as ParseDurationFunction1Args | ParseDurationFunction2Args | ParseDurationFunction3Args;
+export { parseDuration };
+
+// Cheerio
+export { cheerio } from "https://deno.land/x/cheerio@1.0.4/mod.ts";
+
 // Logger
-import Logger from "./logger.ts";
+import Logger from "./lib/logger.ts";
 export { Logger };

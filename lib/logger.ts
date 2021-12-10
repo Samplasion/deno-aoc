@@ -1,5 +1,5 @@
 import { Logger, Transport } from "https://x.nest.land/Yogger@2.2.6/src/mod.ts";
-import { colors } from "./deps.ts";
+import { colors } from "./../deps.ts";
 
 export const LogLevel = {
     debug: {

@@ -1,4 +1,4 @@
-import { Logger, fs, sleep, colors, path } from "../deps.ts";
+import { Logger, fs, sleep, colors, path } from "../../deps.ts";
 import { CLIRunOptions } from "../types.ts";
 import { noConfigurationError } from "../_utils.ts";
 import { getConfig, saveConfig } from "./config.ts";

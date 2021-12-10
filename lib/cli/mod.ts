@@ -1,9 +1,10 @@
-import { Denomander } from "../deps.ts";
+import { Denomander } from "../../deps.ts";
 import run from "./run.ts";
 import "https://deno.land/x/dotenv@v3.1.0/load.ts";
 import init from "./init.ts";
 import { VERSION } from "../../version.ts";
 import download from "./download.ts";
+import submit from "./submit.ts";
 
 const program = new Denomander(
     {
@@ -36,6 +37,12 @@ export default function main() {
         .description("Downloads the day's input")
         .argDescription("day", "The day to download.")
         .action(download.bind(null, program));
+
+    program
+        .command("submit [day]")
+        .description("Submit the day's answer(s)")
+        .argDescription("day", "The day to submit the answers of.")
+        .action(submit);
 
     program.setVersion({
         version: VERSION,

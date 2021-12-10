@@ -1,5 +1,5 @@
-import { path, usefulTags } from "../../deps.ts";
-import { REPO } from "../../_utils.ts";
+import { path, usefulTags } from "../../../deps.ts";
+import { msFixed, REPO } from "../../_utils.ts";
 import { Config } from "../config.ts";
 
 export default function getFiles(config: Config) {
@@ -51,15 +51,15 @@ export function getReadme(config: Config, existingReadme?: string) {
     const results = usefulTags.stripAllIndents`
     <!--RESULTS-->
     ${config.days.map((day, i) => {
-        const p1 = day.part1.solved ? `✅ (in ${day.part1.time}ms)` : "❌";
-        const p2 = day.part2.solved ? `✅ (in ${day.part2.time}ms)` : "❌";
+        const p1 = day.part1.solved || day.part2.solved ? `✅ (in ${msFixed(day.part1.time!)})` : "❌";
+        const p2 = day.part2.solved ? `✅ (in ${msFixed(day.part2.time!)})` : "❌";
         return `
             ### Day ${i + 1}
             
             * Part 1: ${p1}
             * Part 2: ${p2}
             
-            Total time: ${(day.part1.time ?? 0) + (day.part2.time ?? 0)}ms
+            Total time: ${msFixed((day.part1.time ?? 0) + (day.part2.time ?? 0))}
             `;
     }).join("\n")}
     <!--/RESULTS-->`;
@@ -93,16 +93,16 @@ export function getReadme(config: Config, existingReadme?: string) {
 
         [Detailed and up-to-date installation instructions](${REPO})
 
-        ## Running in dev mode
+        ## Running a solution
 
         \`\`\`
-        aoc watch <day>
+        aoc run <day>
         \`\`\`
 
         Example:
 
         \`\`\`
-        aoc watch 1
+        aoc run 25
         \`\`\`
 
         ---
@@ -117,8 +117,21 @@ export function getReadme(config: Config, existingReadme?: string) {
     }
 }
 
+export function updateReadme(config: Config) {
+    const readme = path.resolve(path.join(Deno.cwd(), "README.md"));
+    let content;
+    try {
+        if (Deno.statSync(readme).isFile) {
+            content = Deno.readTextFileSync(readme);
+        }
+    } catch {
+        // ignore
+    }
+    Deno.writeTextFileSync(readme, getReadme(config, content));
+}
+
 function getTemplate() {
-    let cur = import.meta.url.replace(/files.ts$/, "template.ts");
+    let cur = import.meta.url.replace(/files.ts$/, "template.ts.template");
     if (cur.startsWith("file:")) {
         cur = path.resolve(path.fromFileUrl(cur));
     }
