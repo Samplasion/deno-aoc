@@ -3,7 +3,8 @@
 > Note: This tool is still in development. It is not guaranteed to work, at
 > least until beta.
 
-An Advent of Code runner for Deno. Inspired by, and partially compatible with,
+An Advent of Code runner for Deno. Inspired by, and
+[partially compatible with](https://github.com/Samplasion/deno-aoc/wiki/Differences-with-caderek-aocrunner),
 [aocrunner by caderek](https://github.com/caderek/aocrunner).
 
 ## Installation

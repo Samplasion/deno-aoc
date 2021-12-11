@@ -1,4 +1,5 @@
 import { path, usefulTags } from "../../../deps.ts";
+import { VERSION } from "../../../version.ts";
 import { msFixed, REPO } from "../../_utils.ts";
 import { Config } from "../config.ts";
 
@@ -135,5 +136,5 @@ function getTemplate() {
     if (cur.startsWith("file:")) {
         cur = path.resolve(path.fromFileUrl(cur));
     }
-    return Deno.readTextFileSync(cur);
+    return Deno.readTextFileSync(cur).replaceAll("{{VERSION}}", VERSION);
 }
