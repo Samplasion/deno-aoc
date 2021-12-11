@@ -1,4 +1,4 @@
-import { run } from "https://deno.land/x/aoc@{{VERSION}}/mod.ts";
+import run from "https://deno.land/x/aoc@{{VERSION}}/mod.ts";
 
 const parseInput = (rawInput: string) => {
   return rawInput;

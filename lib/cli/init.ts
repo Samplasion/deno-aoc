@@ -1,5 +1,5 @@
-import { colors, Denomander, Logger, path, usefulTags } from "../../deps.ts";
-import { downloadInput, Status } from "../module/api.ts";
+import { cheerio, colors, Denomander, DOMParser, Logger, path, TurndownService, usefulTags } from "../../deps.ts";
+import { downloadInput, getChallengeText, Status } from "../module/api.ts";
 import { malformedDirectoryError, noConfigurationError, noSessionKeyError } from "../_utils.ts";
 import { getConfig, defaultConfig } from "./config.ts";
 import filesToCreate from "./init/files.ts";
@@ -15,12 +15,12 @@ export default function init(program: Denomander, args: { day?: string | number 
                 Logger.error("Invalid day");
                 Logger.info("Please specify a valid numeric day");
             }
-    
+
             Deno.exit(1);
         } else if (args.day < 1 || args.day > 25) {
             Logger.error("Invalid day");
             Logger.info("Please specify a valid numeric day in the range 1-25");
-    
+
             Deno.exit(1);
         }
         args.day = ~~args.day;
@@ -103,7 +103,7 @@ async function initDay(_program: Denomander, day: number) {
     }
 
     Deno.writeTextFileSync(path.resolve(dayDir, "index.ts"), content.replaceAll("{{VERSION}}", VERSION));
-    Deno.writeTextFileSync(path.resolve(dayDir, "README.md"), _getDayReadme(config.year, day));
+    Deno.writeTextFileSync(path.resolve(dayDir, "README.md"), await _getDayReadme(config.year, day));
     const input = await downloadInput(config.year, day);
     if (input.status == Status.OK) {
         Deno.writeTextFileSync(path.resolve(dayDir, "input.txt"), input.data!);
@@ -112,13 +112,49 @@ async function initDay(_program: Denomander, day: number) {
     }
 }
 
-function _getDayReadme(year: number, day: number) {
+export async function _getDayReadme(year: number, day: number, defaultContent = ""): Promise<string> {
+    // ## Info
+    //
+    // Task description: [link](https://adventofcode.com/${year}/day/${day}).
+
+    const [apiPart1, apiPart2] = await getChallengeText(year, day);
+    const parser = new DOMParser();
+    const service = new TurndownService({
+        codeBlockStyle: "fenced",
+        headingStyle: "atx",
+        // Using the strong delimiter here because
+        // the website CSS styles is as such.
+        emDelimiter: "**",
+    });
+
+    let part1, part2;
+
+    if (apiPart1.status == Status.OK && !!apiPart1.data) {
+        part1 = `<!--PART1-->\n${service.turndown(parser.parseFromString(apiPart1.data!, "text/html")!)}\n<!--/PART1-->`;
+    } else {
+        part1 = `<!--PART1-->\nPart 1 locked\n<!--/PART1-->`;
+    }
+
+    if (apiPart2.status == Status.OK && !!apiPart2.data) {
+        part2 = `<!--PART2-->\n${service.turndown(parser.parseFromString(apiPart2.data!, "text/html")!)}\n<!--/PART2-->`;
+    } else {
+        part2 = `<!--PART2-->\nPart 2 locked\n<!--/PART2-->`;
+    }
+
+    if (defaultContent) {
+        return defaultContent
+            .replace(/<!--PART1-->.*<!--\/PART1-->/s, part1)
+            .replace(/<!--PART2-->.*<!--\/PART2-->/s, part2);
+    }
+
     return usefulTags.stripAllIndents`
+    <!-- Content between the PART1 and PART2 tags will be automatically replaced with the challenge's description. -->
+
     # 🎄 Advent of Code ${year} - day ${day} 🎄
 
-    ## Info
+    ${part1}
 
-    Task description: [link](https://adventofcode.com/${year}/day/${day}).
+    ${part2}
 
     ## Notes
 

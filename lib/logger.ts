@@ -10,7 +10,7 @@ export const LogLevel = {
     info: {
         name: "INFO",
         color: colors.cyan,
-        messageColor: colors.white,
+        messageColor: colors.magenta,
     },
     success: {
         name: "SUCCESS",

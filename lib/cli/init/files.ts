@@ -56,7 +56,7 @@ export function getReadme(config: Config, existingReadme?: string) {
         return `
             ### Day ${i + 1}
             
-            ${p1}  in
+            ${p1}  
             ${p2}
             
             Total time: ${msFixed((day.part1.time ?? 0) + (day.part2.time ?? 0))}

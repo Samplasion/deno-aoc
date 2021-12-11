@@ -57,6 +57,24 @@ For example:
 
 You can use `all` to run all the solutions in succession.
 
+### Submit solutions
+
+**Note** that you must run `aoc run <day>` before submitting. Also, you must
+have the session cookie set in the environment variable `AOC_SESSION_COOKIE`.
+
+    $ aoc submit <day>
+
+### Update the README.md file
+
+    $ aoc regen
+
+Which regenerates the main README.md file (which displays the list of days), or:
+
+    $ aoc regen <day>
+
+Which downloads the text of the challenge of the day and stores it in the
+README.md file inside the day's directory.
+
 ## Abuse concerns
 
 This tool caches the input file and only downloads it once. To forcefully

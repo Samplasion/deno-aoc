@@ -122,14 +122,15 @@ export async function submitResult(day: number, year: number, part: number, resu
                 "nine": 9,
                 "ten": 10,
             };
-            const regex = new RegExp(`${Object.keys(textNumbers).join("|")} (second|minute|hour|day)`);
+            const regex = new RegExp(`(${Object.entries(textNumbers).map(e => `${e[0]}|${e[1]}`).join("|")}) (second|minute|hour|day)`);
             if (regex.test(info))
                 timing: {
                     const [, number, unit] = info.match(regex) ?? [null, null, null];
                     if (!number || !unit) {
                         break timing;
                     }
-                    const dur = parseDuration(`${textNumbers[number as keyof typeof textNumbers]} ${unit}`);
+                    const digitNumber = number in textNumbers ? textNumbers[number as keyof typeof textNumbers] : number;
+                    const dur = parseDuration(`${digitNumber} ${unit}`);
                     return {
                         data: dur,
                         status,
@@ -166,4 +167,101 @@ function handleError<T>(err: Error): APIResponse<T> {
         data: null,
         status: Status.ERROR,
     };
+}
+
+export async function getChallengeText(year: number, day: number): Promise<[APIResponse<string>, APIResponse<string>]> {
+    const KEY = Deno.env.get("AOC_SESSION_KEY") ?? "";
+
+    // if (!KEY || KEY.length < 96) {
+    //     return [
+    //         {
+    //             data: null,
+    //             status: Status.NO_KEY,
+    //         },
+    //         {
+    //             data: null,
+    //             status: Status.NO_KEY,
+    //         }
+    //     ];
+    // }
+
+    try {
+        const res = await api(`/${year}/day/${day}`, {
+            method: "GET",
+            apiKey: KEY,
+        });
+        const input = await res.text();
+
+        if (input.includes("don't repeatedly request this endpoint")) {
+            return [
+                {
+                    data: null,
+                    status: Status.TOO_SOON,
+                },
+                {
+                    data: null,
+                    status: Status.TOO_SOON,
+                },
+            ];
+        }
+
+        let part2;
+
+        if (!input.includes("--- Part Two ---")) {
+            part2 = {
+                data: null,
+                status: Status.LOCKED,
+            };
+        }
+
+        const $main = cheerio.load(input)("main");
+
+        if (!$main) {
+            return [
+                {
+                    data: null,
+                    status: Status.ERROR,
+                },
+                {
+                    data: null,
+                    status: Status.ERROR,
+                }
+            ];
+        }
+
+        const parts = $main.children("article");
+
+        if (parts.length === 0) {
+            return [
+                {
+                    data: null,
+                    status: Status.ERROR,
+                },
+                {
+                    data: null,
+                    status: Status.ERROR,
+                }
+            ];
+        }
+
+        if (parts.length === 1) {
+            part2 ??= {
+                data: null,
+                status: Status.LOCKED,
+            };
+        }
+
+        const part1 = {
+            data: parts.eq(0).html(),
+            status: Status.OK,
+        };
+        part2 = {
+            data: parts.eq(1).html(),
+            status: Status.OK,
+        };
+
+        return [part1, part2];
+    } catch (e) {
+        return [handleError<string>(e), handleError<string>(e)];
+    }
 }

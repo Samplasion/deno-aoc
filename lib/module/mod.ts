@@ -58,7 +58,7 @@ type Awaited<T> = T extends Promise<infer U> ? U : T;
  * @param inputFile An alternative path for the input file, if applicable
  * @returns Nothing.
  */
-export async function run(options: ModuleRunOptions, inputFile?: string) {
+export default async function run(options: ModuleRunOptions, inputFile?: string) {
     const cwd = Deno.cwd();
     const root = cwd.split(path.SEP).slice(0, -2).join(path.SEP);
 
@@ -87,14 +87,14 @@ export async function run(options: ModuleRunOptions, inputFile?: string) {
     const dirname = path.basename(cwd);
     const day = Number(dirname.slice(dirname.length-2, dirname.length));
 
-    if (options.part1.tests) {
+    if (options.part1.tests?.length) {
         await runTests({
             part: 1,
             tests: options.part1.tests,
             solution: options.part1.solution,
         });
     }
-    if (options.part2.tests) {
+    if (options.part2.tests?.length) {
         await runTests({
             part: 2,
             tests: options.part2.tests,
@@ -108,7 +108,7 @@ export async function run(options: ModuleRunOptions, inputFile?: string) {
 
     let input: string;
     try {
-        input = await readFile(inputFile);
+        input = await Deno.readTextFile(inputFile);
     } catch {
         Logger.error(`
 The input file hasn't been found at the default position, \`${colors.bold(colors.yellow("input.txt"))}\`.
@@ -187,9 +187,4 @@ async function runSolution(solution: Solution, input: string, part: 1 | 2) {
     console.log();
 
     return [result, time] as const;
-}
-
-async function readFile(file: string) {
-    const decoder = new TextDecoder("utf-8");
-    return decoder.decode(await Deno.readFile(file));
 }

@@ -23,7 +23,7 @@ export default async function run(args: CLIRunOptions) {
         Deno.exit(1);
     }
     const pad = (num: number) => num < 10 ? `0${num}` : num;
-    // deno-lint-ignore require-await
+
     const run = async (day: string, logFailure = false) => {
         const cwd = Deno.cwd();
         if (fs.existsSync(path.resolve(cwd, "src", `day${day}`))) {
@@ -46,7 +46,7 @@ export default async function run(args: CLIRunOptions) {
                 proc.output(),
                 proc.stderrOutput()
             ]);
-            console.log();
+
             Deno.stdout.writeSync(stdout);
             Deno.stderr.writeSync(stderr);
             console.log();

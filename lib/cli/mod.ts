@@ -46,8 +46,9 @@ export default function main() {
         .action(submit);
 
     program
-        .command("regen")
+        .command("regen [day?]")
         .description("Updates the README.md file")
+        .argDescription("day", "If specified, it will regenerate the README.md file for the specified day (downloading the description)")
         .action(regen);
 
     program.setVersion({
