@@ -51,13 +51,13 @@ export function getReadme(config: Config, existingReadme?: string) {
     const results = usefulTags.stripAllIndents`
     <!--RESULTS-->
     ${config.days.map((day, i) => {
-        const p1 = day.part1.solved || day.part2.solved ? `✅ (in ${msFixed(day.part1.time!)})` : "❌";
-        const p2 = day.part2.solved ? `✅ (in ${msFixed(day.part2.time!)})` : "❌";
+        const p1 = day.part1.solved || day.part2.solved ? `✅ Part 1 (in ${msFixed(day.part1.time!)})` : "❌ Part 1";
+        const p2 = day.part2.solved ? `✅ Part 2 (in ${msFixed(day.part2.time!)})` : "❌ Part 2";
         return `
             ### Day ${i + 1}
             
-            * Part 1: ${p1}
-            * Part 2: ${p2}
+            ${p1}  in
+            ${p2}
             
             Total time: ${msFixed((day.part1.time ?? 0) + (day.part2.time ?? 0))}
             `;

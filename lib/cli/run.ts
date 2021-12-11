@@ -2,7 +2,7 @@ import { Logger, fs, sleep, colors, path } from "../../deps.ts";
 import { CLIRunOptions } from "../types.ts";
 import { noConfigurationError } from "../_utils.ts";
 import { getConfig, saveConfig } from "./config.ts";
-import { getReadme } from "./init/files.ts";
+import { getReadme, updateReadme } from "./init/files.ts";
 
 export default async function run(args: CLIRunOptions) {
     const config = getConfig();
@@ -68,18 +68,18 @@ export default async function run(args: CLIRunOptions) {
         await run(pad(dayNumber).toString(), true);
     }
 
-    updateReadme();
+    updateReadme(config);
 }
 
-function updateReadme() {
-    const config = getConfig()!;
+// function updateReadme() {
+//     const config = getConfig()!;
 
-    try {
-        const filePath = path.resolve(Deno.cwd(), "README.md");
-        const readme = Deno.readTextFileSync(filePath).toString();
-        Deno.writeTextFileSync(filePath, getReadme(config, readme));
-    } catch {
-        Logger.error(`Failed to update ${colors.bold(colors.yellow("README.md"))}. Please ensure the file exists and is writable.`);
-        Deno.exit(1);
-    }
-}
+//     try {
+//         const filePath = path.resolve(Deno.cwd(), "README.md");
+//         const readme = Deno.readTextFileSync(filePath).toString();
+//         Deno.writeTextFileSync(filePath, getReadme(config, readme));
+//     } catch {
+//         Logger.error(`Failed to update ${colors.bold(colors.yellow("README.md"))}. Please ensure the file exists and is writable.`);
+//         Deno.exit(1);
+//     }
+// }

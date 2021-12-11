@@ -5,6 +5,7 @@ import init from "./init.ts";
 import { VERSION } from "../../version.ts";
 import download from "./download.ts";
 import submit from "./submit.ts";
+import regen from "./regen.ts";
 
 const program = new Denomander(
     {
@@ -43,6 +44,11 @@ export default function main() {
         .description("Submit the day's answer(s)")
         .argDescription("day", "The day to submit the answers of.")
         .action(submit);
+
+    program
+        .command("regen")
+        .description("Updates the README.md file")
+        .action(regen);
 
     program.setVersion({
         version: VERSION,
