@@ -11,7 +11,7 @@ export const LogLevel = {
     info: {
         name: "INFO",
         color: colors.cyan,
-        messageColor: colors.magenta,
+        messageColor: colors.white,
         log: console.info,
     },
     success: {

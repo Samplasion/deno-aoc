@@ -38,7 +38,9 @@ export interface APIResponse<T> {
 export async function downloadInput(year: number, day: number): Promise<APIResponse<string>> {
     const KEY = Deno.env.get("AOC_SESSION_KEY") ?? "";
 
-    if (!KEY || KEY.length < 96) {
+    Logger.info(colors.green("Downloading input..."));
+
+    if (!KEY || KEY.length != 96) {
         // Logger.error(`Session key not found or invalid. Please set the environment variable ${colors.bold(colors.yellow("AOC_SESSION_KEY"))} to your session key.`);
         // Deno.exit(1);
         return {
@@ -46,8 +48,6 @@ export async function downloadInput(year: number, day: number): Promise<APIRespo
             status: Status.NO_KEY,
         };
     }
-
-    Logger.info(colors.green("Downloading input..."));
 
     return await api(`/${year}/day/${day}/input`, {
         method: "GET",
@@ -61,7 +61,7 @@ export async function downloadInput(year: number, day: number): Promise<APIRespo
 export async function submitResult(day: number, year: number, part: number, result: string): Promise<APIResponse<string | number>> {
     const KEY = Deno.env.get("AOC_SESSION_KEY") ?? "";
 
-    if (!KEY || KEY.length < 96) {
+    if (!KEY || KEY.length != 96) {
         return Promise.resolve({
             data: null,
             status: Status.NO_KEY,
@@ -172,7 +172,7 @@ function handleError<T>(err: Error): APIResponse<T> {
 export async function getChallengeText(year: number, day: number): Promise<[APIResponse<string>, APIResponse<string>]> {
     const KEY = Deno.env.get("AOC_SESSION_KEY") ?? "";
 
-    // if (!KEY || KEY.length < 96) {
+    // if (!KEY || KEY.length != 96) {
     //     return [
     //         {
     //             data: null,

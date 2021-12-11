@@ -104,9 +104,11 @@ async function initDay(_program: Denomander, day: number) {
 
     Deno.writeTextFileSync(path.resolve(dayDir, "index.ts"), content.replaceAll("{{VERSION}}", VERSION));
     Deno.writeTextFileSync(path.resolve(dayDir, "README.md"), await _getDayReadme(config.year, day));
+    Logger.success("Done!");
     const input = await downloadInput(config.year, day);
     if (input.status == Status.OK) {
         Deno.writeTextFileSync(path.resolve(dayDir, "input.txt"), input.data!);
+        Logger.success("Done!");
     } else {
         noSessionKeyError();
     }
