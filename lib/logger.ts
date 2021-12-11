@@ -6,31 +6,37 @@ export const LogLevel = {
         name: "DEBUG",
         color: colors.brightMagenta,
         messageColor: colors.white,
+        log: console.debug,
     },
     info: {
         name: "INFO",
         color: colors.cyan,
         messageColor: colors.magenta,
+        log: console.info,
     },
     success: {
         name: "SUCCESS",
         color: colors.green,
         messageColor: colors.brightGreen,
+        log: console.log,
     },
     warn: {
         name: "WARN",
         color: (string: string) => colors.rgb8(string, 214),
         messageColor: (string: string) => colors.rgb8(string, 208),
+        log: console.warn,
     },
     error: {
         name: "ERROR",
         color: colors.red,
         messageColor: colors.brightRed,
+        log: console.error,
     },
     fatal: {
         name: "FATAL",
         color: (string: string) => colors.bgBrightRed(colors.black(string)),
         messageColor: (string: string) => colors.bgBrightRed(colors.black(string)),
+        log: console.error,
     },
 }
 
@@ -44,7 +50,7 @@ const logger = Logger.create<typeof LogLevel>({
                 const logLevel = LogLevel[level.level as keyof typeof LogLevel];
                 const message = level.message;
                 // [${colors.blue(date)}] ${logLevel.color(logLevel.name)} 
-                console.log(`${logLevel.messageColor(message)}`);
+                logLevel.log(`${logLevel.messageColor(message)}`);
             }
         })
     ],
