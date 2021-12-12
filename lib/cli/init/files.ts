@@ -20,6 +20,21 @@ export default function getFiles(config: Config) {
         {
             name: ".env",
             content: "AOC_SESSION_KEY=",
+        },
+        {
+            name: ".gitignore",
+            content: usefulTags.stripAllIndents`
+                node_modules
+                *.temp.*
+                */**/*.temp.*
+                */**/input.txt
+                */**/test.txt
+                *.log
+                */**/*.log
+                .idea
+                .vscode
+                .env
+            `,
         }
     ];
 }
