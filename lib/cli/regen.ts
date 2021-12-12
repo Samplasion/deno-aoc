@@ -13,7 +13,7 @@ export default async function regen({ day }: { day?: number }) {
 
     if (!day) {
         updateReadme(config);
-    } else if (day > 1 && day <= 25) {
+    } else if (day >= 1 && day <= 25) {
         const strDay = day.toString().padStart(2, "0");
         try {
             const dayPath = path.join(Deno.cwd(), "src", `day${strDay}`);
