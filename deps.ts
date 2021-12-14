@@ -2,6 +2,7 @@
 export * as fs from "https://deno.land/std@0.117.0/fs/mod.ts";
 export * as path from "https://deno.land/std@0.117.0/path/mod.ts";
 export * as colors from "https://deno.land/std@0.117.0/fmt/colors.ts";
+export * as bufio from "https://deno.land/std@0.117.0/io/buffer.ts";
 
 // CLI
 import Denomander from "https://deno.land/x/denomander@0.9.1/mod.ts";

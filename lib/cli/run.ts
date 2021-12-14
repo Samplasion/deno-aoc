@@ -1,8 +1,8 @@
-import { Logger, fs, sleep, colors, path } from "../../deps.ts";
+import { Logger, fs, sleep, colors, path, bufio } from "../../deps.ts";
 import { CLIRunOptions } from "../types.ts";
 import { noConfigurationError } from "../_utils.ts";
-import { getConfig, saveConfig } from "./config.ts";
-import { getReadme, updateReadme } from "./init/files.ts";
+import { getConfig } from "./config.ts";
+import { updateReadme } from "./init/files.ts";
 
 export default async function run(args: CLIRunOptions) {
     const config = getConfig();
@@ -24,7 +24,7 @@ export default async function run(args: CLIRunOptions) {
     }
     const pad = (num: number) => num < 10 ? `0${num}` : num;
 
-    const run = async (day: string, logFailure = false) => {
+    const run = async (day: string, logFailure = false): Promise<number> => {
         const cwd = Deno.cwd();
         if (fs.existsSync(path.resolve(cwd, "src", `day${day}`))) {
             const proc = Deno.run({
@@ -41,34 +41,45 @@ export default async function run(args: CLIRunOptions) {
                 stdout: "piped",
                 stderr: "piped",
             });
-            const [_status, stdout, stderr] = await Promise.all([
-                proc.status(),
-                proc.output(),
-                proc.stderrOutput()
-            ]);
 
-            Deno.stdout.writeSync(stdout);
-            Deno.stderr.writeSync(stderr);
+            const bufferOutput = async (reader: Deno.Reader, output: typeof console.log | typeof console.error): Promise<void> => {
+                for await (const line of bufio.readLines(reader)) {
+                    output(line);
+                }
+            }
+
+            bufferOutput(proc.stdout, console.log);
+            bufferOutput(proc.stderr, console.error);
+            
+            const _status = await proc.status();
             console.log();
             proc.close();
+            return _status.code;
         } else if (logFailure) {
             Logger.error(`Files for day ${day} not found.`);
             Logger.info(colors.green(`Please run "${colors.bold(colors.yellow(`aoc init ${dayNumber}`))}" to create the files.`));
             Deno.exit(1);
         }
+    
+        return 0;
     }
+
+    let status = 0;
+
     if (day == "all") {
         for (let i = 1; i <= 25; i++) {
             const day = pad(i).toString();
             Logger.info(colors.cyan(`Running day ${day}...`));
-            await run(day);
+            status = await run(day);
             await sleep((timeout ?? 500) / 1000);
         }
     } else {
-        await run(pad(dayNumber).toString(), true);
+        status = await run(pad(dayNumber).toString(), true);
     }
 
     updateReadme(config);
+
+    Deno.exit(status);
 }
 
 // function updateReadme() {
