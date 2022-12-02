@@ -28,3 +28,7 @@ export function noSessionKeyError() {
 }
 
 export const REPO = "https://github.com/samplasion/deno-aoc";
+
+export function isSessionKeyInvalid(key: string) {
+    return !key || ![96, 128].includes(key.length);
+}

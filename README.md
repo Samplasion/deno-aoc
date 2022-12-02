@@ -3,6 +3,9 @@
 > Note: This tool is still in development. It is not guaranteed to work, at
 > least until beta.
 
+> **Important:** As of version 0.0.1-alpha.11, this tool reports the correct
+> user agent as requested by the AoC creator.
+
 An Advent of Code runner for Deno. Inspired by, and
 [partially compatible with](https://github.com/Samplasion/deno-aoc/wiki/Differences-with-caderek's-aocrunner),
 [aocrunner by caderek](https://github.com/caderek/aocrunner).
