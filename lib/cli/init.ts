@@ -49,7 +49,7 @@ async function initDirectory(program: Denomander) {
     }
 
     // Create the files
-    const files = filesToCreate(config);
+    const files = await filesToCreate(config);
     for (const file of files) {
         if (file.name.includes("/")) {
             const dirname = file.name.split("/").slice(0, -1).join("/");

@@ -3,7 +3,7 @@ import { VERSION } from "../../../version.ts";
 import { msFixed, REPO } from "../../_utils.ts";
 import { Config } from "../config.ts";
 
-export default function getFiles(config: Config) {
+export default async function getFiles(config: Config) {
     return [
         {
             name: ".aoc.json",
@@ -15,7 +15,7 @@ export default function getFiles(config: Config) {
         },
         {
             name: "src/template/index.ts",
-            content: getTemplate(),
+            content: await getTemplate(),
         },
         {
             name: ".env",
@@ -146,10 +146,16 @@ export function updateReadme(config: Config) {
     Deno.writeTextFileSync(readme, getReadme(config, content));
 }
 
-function getTemplate() {
+async function getTemplate() {
     let cur = import.meta.url.replace(/files.ts$/, "template.ts.template");
     if (cur.startsWith("file:")) {
         cur = path.resolve(path.fromFileUrl(cur));
     }
-    return Deno.readTextFileSync(cur).replaceAll("{{VERSION}}", VERSION);
+    let fileContent: string;
+    if (cur.startsWith("https:")) {
+        fileContent = await fetch(cur).then(res => res.text());
+    } else {
+        fileContent = Deno.readTextFileSync(cur);
+    }
+    return fileContent.replaceAll("{{VERSION}}", VERSION);
 }
