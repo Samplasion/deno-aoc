@@ -64,21 +64,36 @@ export function getReadme(config: Config, existingReadme?: string) {
     }).join("\n")}
     <!--/SOLUTIONS-->`;
 
-    const results = usefulTags.stripAllIndents`
+    const useTabularResults = existingReadme?.includes("<!--useTabularResults=true-->") ?? false;
+
+    const tabularResults = usefulTags.stripAllIndents`
     <!--RESULTS-->
+    | Day  | Part 1 | Part 2 | Total time |
+    |------|--------|--------|------------|
     ${config.days.map((day, i) => {
-        const p1 = day.part1.solved || day.part2.solved ? `✅ Part 1 (in ${msFixed(day.part1.time!)})` : "❌ Part 1";
-        const p2 = day.part2.solved ? `✅ Part 2 (in ${msFixed(day.part2.time!)})` : "❌ Part 2";
-        return `
-            ### Day ${i + 1}
-            
-            ${p1}  
-            ${p2}
-            
-            Total time: ${msFixed((day.part1.time ?? 0) + (day.part2.time ?? 0))}
-            `;
+        const p1 = day.part1.solved || day.part2.solved ? `✅ (in ${msFixed(day.part1.time!)})` : "❌";
+        const p2 = day.part2.solved ? `✅ (in ${msFixed(day.part2.time!)})` : "❌";
+        const total = (day.part1.time ?? 0) + (day.part2.time ?? 0);
+        return `|  ${i + 1}  | ${p1} | ${p2} | ${total ? msFixed(total) : ""} |`;
     }).join("\n")}
     <!--/RESULTS-->`;
+
+    const results = useTabularResults ? tabularResults :
+        usefulTags.stripAllIndents`
+        <!--RESULTS-->
+        ${config.days.map((day, i) => {
+            const p1 = day.part1.solved || day.part2.solved ? `✅ Part 1 (in ${msFixed(day.part1.time!)})` : "❌ Part 1";
+            const p2 = day.part2.solved ? `✅ Part 2 (in ${msFixed(day.part2.time!)})` : "❌ Part 2";
+            return `
+                ### Day ${i + 1}
+                
+                ${p1}  
+                ${p2}
+                
+                Total time: ${msFixed((day.part1.time ?? 0) + (day.part2.time ?? 0))}
+                `;
+        }).join("\n")}
+        <!--/RESULTS-->`;
 
     // return solutions.join("\n");
 
