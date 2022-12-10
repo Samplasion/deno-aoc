@@ -53,7 +53,7 @@ export { prettyMs, defaultPrettyMs };
 export { cheerio } from "https://deno.land/x/cheerio@1.0.7/mod.ts";
 
 // Deno DOM Parser
-export * from "https://github.com/b-fuze/deno-dom/raw/188d7240e5371caf1b4add8bb7183933d142337e/deno-dom-wasm.ts"
+export * from "https://raw.githubusercontent.com/b-fuze/deno-dom/188d7240e5371caf1b4add8bb7183933d142337e/deno-dom-wasm.ts"
 
 // Turndown
 import TurndownService from 'https://cdn.skypack.dev/turndown@7.1.1';

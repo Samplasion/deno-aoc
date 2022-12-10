@@ -14,6 +14,8 @@ type Awaited<T> = T extends Promise<infer U> ? U : T;
  * In your solution files, this is your main entrypoint. You can
  * add your own tests by adding them to the `tests` array in each part.
  * It is recommended to add the examples in the challenge description.
+ * You can add your tests as files next to the input file and use
+ * [getTests] to get them.
  * 
  * You can use [options.onlyTests] to only run the tests, which is useful
  * when your algorithm is resource intensive and is still being developed.
@@ -144,6 +146,59 @@ or add an input file to the current directory.
     saveConfig(config);
     updateReadme(config);
     Deno.chdir(cwd);
+}
+
+/**
+ * Fetches the contents of the file at `filename`, returning them
+ * asynchronously.
+ * 
+ * Panics with an informative message if the file cannot be found.
+ * 
+ * @example
+ * ```ts
+ * // ...
+ * 
+ * const testInput = await getTests();
+ * const longerTest = await getTests("longer-test.txt");
+ * 
+ * run({
+ *   part1: {
+ *     tests: [
+ *       {
+ *         input: testInput,
+ *         expected: 1234,
+ *       },
+ *     ],
+ *     solution: part1,
+ *   },
+ *   part2: {
+ *     tests: [
+ *       {
+ *         input: longerTest,
+ *         expected: 4321,
+ *       },
+ *     ],
+ *     solution: part2,
+ *   },
+ *   onlyTests: true,
+ * });
+ * ```
+ * @param filename The (relative or absolute) path to the test input file.
+ * @returns The contents of the file at `filename`, asynchronously.
+ */
+export async function getTests(filename = "test.txt") {
+    const cwd = Deno.cwd();
+    const fullPath = path.join(cwd, filename);
+    try {
+        return await Deno.readTextFile(fullPath);
+    } catch {
+        Logger.error(`
+The test input file hasn't been found at the specified position, \`${colors.bold(colors.yellow(filename))}\`.
+Please either provide the path to the test input file as an argument,
+or add a ${colors.bold("test.txt")} file to the current directory.
+(Checking: \`${colors.bold(colors.yellow(fullPath))}\`)`.trim());
+        Deno.exit(1);
+    }
 }
 
 async function runTests(options: {
