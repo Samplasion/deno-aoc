@@ -35,6 +35,19 @@ export default async function getFiles(config: Config) {
                 .vscode
                 .env
             `,
+        },
+        {
+            name: "src/deps.ts",
+            content: usefulTags.stripAllIndents`
+                // Change these to update the whole project at once
+                import run from "https://deno.land/x/aoc@${VERSION}/mod.ts";
+                export * from "https://deno.land/x/aoc@${VERSION}/mod.ts";
+                export default run;
+                `,
+        },
+        {
+            name: "src/utils.ts",
+            content: "// Add your utilities here\n",
         }
     ];
 }
